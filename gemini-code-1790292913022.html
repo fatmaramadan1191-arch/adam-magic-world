@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>عالم آدم الساحر | Adam's Magical World</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Cairo & Tajawal -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bubblegum: '#FF3366',
+            sunny: '#FFD166',
+            mint: '#06D6A0',
+            sky: '#118AB2',
+            skyblue: '#4CC9F0',
+            lavender: '#7209B7',
+            deepblue: '#1A1443',
+            goldRoyal: '#FFB703',
+            goldDark: '#FB8500'
+          },
+          fontFamily: {
+            arabic: ['Cairo', 'Tajawal', 'sans-serif'],
+          },
+          keyframes: {
+            gentleBounce: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' }
+            },
+            softWiggle: {
+              '0%, 100%': { transform: 'rotate(-3deg)' },
+              '50%': { transform: 'rotate(3deg)' }
+            },
+            royalGlow: {
+              '0%, 100%': { boxShadow: '0 0 25px rgba(255, 183, 3, 0.75), 0 0 50px rgba(255, 51, 102, 0.4)' },
+              '50%': { boxShadow: '0 0 50px rgba(255, 183, 3, 1), 0 0 80px rgba(76, 201, 240, 0.65)' }
+            },
+            crownFloat: {
+              '0%, 100%': { transform: 'translate(-50%, 0) scale(1)' },
+              '50%': { transform: 'translate(-50%, -12px) scale(1.1)' }
+            }
+          },
+          animation: {
+            gentleBounce: 'gentleBounce 2.5s infinite ease-in-out',
+            softWiggle: 'softWiggle 1.8s infinite ease-in-out',
+            royalGlow: 'royalGlow 2.5s infinite ease-in-out',
+            crownFloat: 'crownFloat 2.2s infinite ease-in-out'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    body {
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+      touch-action: manipulation;
+      background: radial-gradient(circle at 20% 20%, #E0F7FA 0%, #FFFDE7 50%, #FCE4EC 100%);
+    }
+    .clay-card {
+      background: #FFFFFF;
+      border-radius: 2.2rem;
+      box-shadow: 0 16px 36px -8px rgba(76, 201, 240, 0.25), 0 10px 22px -6px rgba(255, 51, 102, 0.18);
+      border: 4px solid #FFFFFF;
+    }
+    .clay-btn {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.14);
+    }
+    .clay-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.14);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-800 pb-16 relative overflow-x-hidden">
+
+  <header class="relative pt-4 pb-4 px-4 md:px-8 border-b-4 border-yellow-200/90 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <div class="relative cursor-pointer" onclick="SoundFx.cheer(); triggerConfetti();" title="اضغط لترى سحر الأبطال!">
+          <div class="w-14 h-14 md:w-16 md:h-16 rounded-3xl bg-gradient-to-tr from-goldRoyal via-bubblegum to-skyblue p-1 shadow-lg animate-softWiggle flex items-center justify-center">
+            <span class="text-3xl">👑</span>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl md:text-3xl font-black text-bubblegum tracking-tight">عالم آدم الساحر</h1>
+            <span class="bg-sunny text-amber-900 text-xs font-black px-2.5 py-1 rounded-full shadow-sm animate-pulse">البطل الحقيقي 🌟</span>
+          </div>
+          <p class="text-xs md:text-sm font-bold text-slate-500">الموقع السحري والخاص بحبيبنا البطل الصغير آدم ✨</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center gap-2 overflow-x-auto py-1 max-w-full">
+        <button onclick="switchTab('hero')" id="tab-btn-hero" class="clay-btn tab-btn px-4 py-2.5 rounded-2xl font-black text-sm md:text-base flex items-center gap-2 bg-gradient-to-r from-bubblegum to-rose-500 text-white shadow-md">
+          <span>👑</span>
+          <span>صورة وبطاقة آدم</span>
+        </button>
+        <button onclick="switchTab('habits')" id="tab-btn-habits" class="clay-btn tab-btn px-4 py-2.5 rounded-2xl font-black text-sm md:text-base flex items-center gap-2 bg-white text-slate-700 border-2 border-slate-100 hover:bg-slate-50">
+          <span>⭐</span>
+          <span>لوحة النجوم</span>
+        </button>
+        <button onclick="switchTab('draw')" id="tab-btn-draw" class="clay-btn tab-btn px-4 py-2.5 rounded-2xl font-black text-sm md:text-base flex items-center gap-2 bg-white text-slate-700 border-2 border-slate-100 hover:bg-slate-50">
+          <span>🎨</span>
+          <span>مرسم آدم</span>
+        </button>
+        <button onclick="switchTab('games')" id="tab-btn-games" class="clay-btn tab-btn px-4 py-2.5 rounded-2xl font-black text-sm md:text-base flex items-center gap-2 bg-white text-slate-700 border-2 border-slate-100 hover:bg-slate-50">
+          <span>🧩</span>
+          <span>لعبة الذاكرة</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 md:px-8 mt-6">
+
+    <!-- TAB 1: HERO & PHOTO CARD -->
+    <section id="sec-hero" class="tab-content transition-all duration-300">
+
+      <!-- Hero Presentation Card -->
+      <div class="clay-card p-6 md:p-10 bg-gradient-to-br from-amber-100/90 via-pink-100/75 to-skyblue/20 relative overflow-hidden mb-8 border-4 border-white">
+        <div class="absolute -left-6 -top-6 text-7xl opacity-20 pointer-events-none animate-gentleBounce">🚀</div>
+        <div class="absolute right-4 bottom-2 text-7xl opacity-20 pointer-events-none animate-softWiggle">⭐</div>
+
+        <div class="flex flex-col lg:flex-row items-center gap-8 relative z-10">
+          
+          <!-- Adam's Golden Royal Portrait Frame -->
+          <div class="flex flex-col items-center flex-shrink-0">
+            <div class="relative group">
+              <!-- Golden Glowing Ring -->
+              <div class="w-64 h-64 md:w-72 md:h-72 rounded-full p-3 bg-gradient-to-tr from-goldRoyal via-bubblegum to-skyblue shadow-2xl animate-royalGlow flex items-center justify-center">
+                <div class="w-full h-full rounded-full overflow-hidden border-4 border-white bg-slate-900 relative shadow-inner flex items-center justify-center">
+                  
+                  <!-- Main Image Container -->
+                  <div id="main-portrait-slot" class="w-full h-full flex items-center justify-center bg-slate-800">
+                    <img id="adam-actual-img" 
+                         src="adam.jpg" 
+                         alt="البطل آدم" 
+                         style="width: 100%; height: 100%; object-fit: cover; transform: scale(1) rotate(0deg); transition: transform 0.2s;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Animated Crown on Head -->
+              <div class="absolute -top-8 left-1/2 animate-crownFloat text-6xl md:text-7xl drop-shadow-xl select-none pointer-events-none">
+                👑
+              </div>
+
+              <!-- Quick Upload Camera Icon on Frame -->
+              <label for="direct-photo-input" class="absolute bottom-2 right-2 bg-gradient-to-r from-bubblegum to-rose-600 hover:scale-110 text-white p-4 rounded-full cursor-pointer shadow-2xl clay-btn flex items-center justify-center transition-all" title="تغيير الصورة من الجهاز">
+                <span class="text-2xl">📸</span>
+                <input type="file" id="direct-photo-input" accept="image/*" class="hidden" onchange="processSelectedImage(this.files[0])">
+              </label>
+
+              <!-- Reset to Default Button -->
+              <button onclick="resetAdamPhoto()" class="absolute bottom-2 left-2 bg-white hover:scale-110 text-amber-700 border-2 border-yellow-300 p-3 rounded-full cursor-pointer shadow-xl clay-btn flex items-center justify-center transition-all text-xs font-black" title="استعادة الصورة الأصلية">
+                <span>🔄</span>
+              </button>
+            </div>
+
+            <!-- Controls: Zoom / Rotate -->
+            <div id="image-controls" class="flex items-center gap-2 mt-4 bg-white/90 p-2 rounded-2xl shadow-sm border border-amber-200">
+              <button onclick="adjustImageScale(0.1)" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 font-black text-sm" title="تكبير الصورة">🔍 +</button>
+              <button onclick="adjustImageScale(-0.1)" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 font-black text-sm" title="تصغير الصورة">🔍 -</button>
+              <button onclick="adjustImageRotate(90)" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 font-black text-sm" title="تدوير الصورة">🔄 تدوير</button>
+            </div>
+
+            <!-- Name Tag and Super Title -->
+            <div class="mt-4 text-center">
+              <div class="inline-flex items-center gap-2 bg-white/95 px-6 py-2.5 rounded-full shadow-md border-2 border-amber-300">
+                <span class="text-xl">⚡</span>
+                <span id="hero-name-badge" class="font-black text-xl md:text-2xl text-purple-900">البطل الخارق آدم</span>
+                <button onclick="editHeroName()" class="text-sm text-bubblegum hover:scale-125 transition-transform font-bold p-1" title="تعديل الاسم">✏️</button>
+              </div>
+              <div class="flex items-center justify-center gap-2 mt-2">
+                <span class="text-xs font-black text-white bg-gradient-to-r from-amber-500 to-yellow-400 px-4 py-1.5 rounded-full shadow-sm">
+                  بطل العالم الساحر والوسيم 🌟
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Greeting Text and Voice Buttons -->
+          <div class="flex-1 text-center lg:text-right space-y-4">
+            <div class="inline-flex items-center gap-2 bg-white/90 text-lavender font-black text-xs md:text-sm px-4 py-2 rounded-full shadow-sm border border-purple-100">
+              <span class="w-3 h-3 rounded-full bg-mint animate-ping"></span>
+              أهلاً بكم في الموقع الرسمي لبطلنا آدم!
+            </div>
+
+            <h2 class="text-3xl md:text-5xl font-black text-slate-800 leading-tight">
+              نورت عالمك الساحر يا <span id="hero-name-display" class="text-bubblegum underline decoration-yellow-400 decoration-wavy">بطلنا آدم</span>! 🦸‍♂️
+            </h2>
+
+            <p class="text-base md:text-lg text-slate-600 font-semibold max-w-xl leading-relaxed">
+              هذا الموقع مصنوع بحب خصيصاً لك يا آدم! كل يوم فيه مرح، رسم، ألعاب، وجمع نجوم لتكون دائماً البطل الذكي والشجاع!
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+              <button onclick="SoundFx.cheer(); triggerConfetti();" class="clay-btn bg-gradient-to-r from-bubblegum via-rose-500 to-pink-500 text-white font-black px-6 py-3.5 rounded-2xl flex items-center gap-2.5 shadow-lg text-base hover:opacity-95">
+                <span>✨ أطلق الاحتفال بآدم!</span>
+              </button>
+              <button onclick="speakHeroGreeting()" class="clay-btn bg-sky hover:bg-sky-600 text-white font-black px-5 py-3.5 rounded-2xl flex items-center gap-2 shadow-md">
+                <span>🔊 استمع لتحية آدم</span>
+              </button>
+              <button onclick="switchTab('habits')" class="clay-btn bg-white hover:bg-yellow-50 text-amber-900 border-2 border-yellow-300 font-black px-5 py-3.5 rounded-2xl flex items-center gap-2 shadow-sm">
+                <span>⭐ نجوم آدم: <strong id="quick-star-count" class="text-bubblegum font-black text-xl">0</strong></span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Feature Highlight Badges -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="clay-card p-5 text-center bg-gradient-to-b from-blue-50 to-white">
+          <div class="text-4xl mb-2">⭐</div>
+          <h4 class="font-black text-slate-800">بطل الأخلاق والترتيب</h4>
+          <p class="text-xs text-slate-500 font-bold mt-1">يجمع نجوم الشجاعة يومياً</p>
+        </div>
+        <div class="clay-card p-5 text-center bg-gradient-to-b from-pink-50 to-white">
+          <div class="text-4xl mb-2">🎨</div>
+          <h4 class="font-black text-slate-800">رسام وفنان مبدع</h4>
+          <p class="text-xs text-slate-500 font-bold mt-1">يرسم أجمل اللوحات والملصقات</p>
+        </div>
+        <div class="clay-card p-5 text-center bg-gradient-to-b from-amber-50 to-white">
+          <div class="text-4xl mb-2">🧩</div>
+          <h4 class="font-black text-slate-800">عبقري الذاكرة</h4>
+          <p class="text-xs text-slate-500 font-bold mt-1">يفوز بكل جولات لعبة الذاكرة</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: STAR HABIT REWARDS -->
+    <section id="sec-habits" class="tab-content hidden transition-all duration-300">
+      <div class="clay-card p-6 md:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b-2 border-slate-100 pb-4">
+          <div>
+            <h3 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+              <span class="text-3xl">⭐</span> لوحة نجوم وإنجازات آدم
+            </h3>
+            <p class="text-sm font-semibold text-slate-500">كل عادة جميلة وسلوك طيب يمنح آدم نجمة ذهبية تلمع في سمائه!</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-400 to-yellow-500 text-white px-5 py-2.5 rounded-2xl shadow font-black text-base flex items-center gap-2">
+            <span>نجوم آدم اليوم:</span>
+            <span id="stars-total-badge" class="text-2xl bg-white text-amber-700 px-3.5 py-0.5 rounded-xl shadow-inner font-black">0</span>
+            <span>⭐</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="habits-grid"></div>
+
+        <div class="mt-6 p-4 rounded-2xl bg-amber-50 border-2 border-yellow-200 flex items-center gap-3">
+          <span class="text-3xl">🎁</span>
+          <div>
+            <h5 class="font-black text-amber-900 text-sm">مكافأة بطلنا آدم عند جمع 5 نجوم:</h5>
+            <p class="text-xs text-amber-700 font-semibold">يحصل آدم على حضن دافئ من الماما، قبلة كبيرة، ونصف ساعة إضافية من اللعب الممتع!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: DRAWING STUDIO -->
+    <section id="sec-draw" class="tab-content hidden transition-all duration-300">
+      <div class="clay-card p-4 md:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 border-b-2 border-slate-100 pb-3">
+          <div>
+            <h3 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+              <span class="text-3xl">🎨</span> مرسم آدم السحري
+            </h3>
+            <p class="text-xs md:text-sm font-semibold text-slate-500">ارسم عالمك، أضف ملصقات مرحة، واحفظ لوحتك الرائعة في جهازك!</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="clearCanvas()" class="clay-btn bg-rose-100 text-rose-700 hover:bg-rose-200 px-3 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1 border border-rose-300">
+              <span>🗑️ لوحة جديدة</span>
+            </button>
+            <button onclick="downloadArtwork()" class="clay-btn bg-bubblegum text-white px-4 py-2 rounded-xl text-xs md:text-sm font-black flex items-center gap-1 shadow">
+              <span>💾 حفظ لوحتي</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="flex flex-wrap items-center gap-3 mb-4 bg-slate-50 p-3 rounded-2xl border border-slate-200 justify-between">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-black text-slate-600">الألوان:</span>
+            <div class="flex items-center gap-1.5" id="color-palette">
+              <button class="color-dot w-7 h-7 rounded-full bg-[#FF3366] border-2 border-white ring-2 ring-bubblegum" onclick="selectColor('#FF3366', this)"></button>
+              <button class="color-dot w-7 h-7 rounded-full bg-[#FFD166] border-2 border-white" onclick="selectColor('#FFD166', this)"></button>
+              <button class="color-dot w-7 h-7 rounded-full bg-[#06D6A0] border-2 border-white" onclick="selectColor('#06D6A0', this)"></button>
+              <button class="color-dot w-7 h-7 rounded-full bg-[#118AB2] border-2 border-white" onclick="selectColor('#118AB2', this)"></button>
+              <button class="color-dot w-7 h-7 rounded-full bg-[#7209B7] border-2 border-white" onclick="selectColor('#7209B7', this)"></button>
+              <button class="color-dot w-7 h-7 rounded-full bg-[#222222] border-2 border-white" onclick="selectColor('#222222', this)"></button>
+              <button class="color-dot w-7 h-7 rounded-full bg-[#FFFFFF] border-2 border-slate-300" title="ممحاة" onclick="selectColor('#FFFFFF', this)">🧽</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1">
+            <span class="text-xs font-black text-slate-600">الفرشاة:</span>
+            <button onclick="setBrushSize(5)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 font-bold text-xs">S</button>
+            <button onclick="setBrushSize(10)" class="w-7 h-7 rounded-lg bg-sky text-white border border-sky font-bold text-xs">M</button>
+            <button onclick="setBrushSize(22)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 font-bold text-xs">L</button>
+          </div>
+
+          <div class="flex items-center gap-1.5 overflow-x-auto py-1">
+            <span class="text-xs font-black text-slate-600">الملصقات:</span>
+            <button onclick="selectSticker('👑')" class="text-xl p-1 bg-white hover:bg-yellow-100 rounded-lg border border-slate-200" title="تاج">👑</button>
+            <button onclick="selectSticker('⭐')" class="text-xl p-1 bg-white hover:bg-yellow-100 rounded-lg border border-slate-200" title="نجمة">⭐</button>
+            <button onclick="selectSticker('🚀')" class="text-xl p-1 bg-white hover:bg-yellow-100 rounded-lg border border-slate-200" title="صاروخ">🚀</button>
+            <button onclick="selectSticker('🦁')" class="text-xl p-1 bg-white hover:bg-yellow-100 rounded-lg border border-slate-200" title="أسد">🦁</button>
+            <button onclick="selectSticker('🦖')" class="text-xl p-1 bg-white hover:bg-yellow-100 rounded-lg border border-slate-200" title="ديناصور">🦖</button>
+            <button onclick="selectSticker('🚗')" class="text-xl p-1 bg-white hover:bg-yellow-100 rounded-lg border border-slate-200" title="سيارة">🚗</button>
+            <button onclick="selectSticker(null)" id="btn-brush-mode" class="text-xs px-2.5 py-1 bg-sky text-white rounded-lg font-bold">فرشاة 🖌️</button>
+          </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="relative w-full bg-white rounded-2xl border-4 border-dashed border-sky/40 overflow-hidden shadow-inner flex justify-center items-center cursor-crosshair">
+          <canvas id="paintCanvas" class="block w-full h-[360px] md:h-[440px] bg-white"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: MEMORY GAME -->
+    <section id="sec-games" class="tab-content hidden transition-all duration-300">
+      <div class="clay-card p-6 md:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b-2 border-slate-100 pb-4">
+          <div>
+            <h3 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+              <span class="text-3xl">🧩</span> لعبة أبطال الذاكرة
+            </h3>
+            <p class="text-sm font-semibold text-slate-500">ساعد آدم في إيجاد البطاقات المتشابهة لتفوز بكأس الأبطال!</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-yellow-100 px-4 py-2 rounded-2xl border-2 border-yellow-300 text-amber-900 font-bold text-sm flex items-center gap-2">
+              <span>⏱️ الحركات:</span>
+              <span id="moves-count" class="text-base text-bubblegum font-black">0</span>
+            </div>
+            <button onclick="initMemoryGame()" class="clay-btn bg-mint text-white px-4 py-2 rounded-2xl font-black text-sm flex items-center gap-1 shadow">
+              <span>🔄 جولة جديدة</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="memory-grid" class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 gap-3 md:gap-5 max-w-2xl mx-auto py-2"></div>
+
+        <div id="game-win-banner" class="hidden mt-6 p-6 rounded-3xl bg-mint/20 border-3 border-mint text-center animate-bounce">
+          <p class="text-2xl md:text-3xl font-black text-emerald-800">🎉 رائع جداً يا آدم! أنت عبقري وذاكرتك حديدية! 🏆</p>
+          <button onclick="initMemoryGame()" class="clay-btn mt-4 bg-bubblegum text-white px-8 py-2.5 rounded-full font-black text-base shadow-lg">
+            العب جولة ثانية 🚀
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* Robust Web Audio Synthesizer */
+    const SoundFx = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      },
+      beep(freq = 440, type = 'sine', duration = 0.15, gainVal = 0.15) {
+        try {
+          this.init();
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      },
+      click() {
+        this.beep(520, 'sine', 0.08, 0.2);
+      },
+      starDing() {
+        try {
+          this.init();
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+          [587.3, 880, 1174.6].forEach((f, idx) => {
+            setTimeout(() => {
+              this.beep(f, 'triangle', 0.35, 0.2);
+            }, idx * 90);
+          });
+        } catch(e) {}
+      },
+      cheer() {
+        try {
+          this.init();
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+          [440, 554.3, 659.2, 880].forEach((freq, idx) => {
+            setTimeout(() => {
+              this.beep(freq, 'triangle', 0.4, 0.25);
+            }, idx * 80);
+          });
+        } catch(e) {}
+      }
+    };
+
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 90,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+  </script>
+
+  <script>
+    const STORAGE_KEY_PHOTO = 'adam_user_actual_photo';
+    const STORAGE_KEY_NAME = 'adam_hero_name';
+
+    let currentScale = 1;
+    let currentRotate = 0;
+
+    function initHeroProfile() {
+      const savedPhoto = localStorage.getItem(STORAGE_KEY_PHOTO);
+      const img = document.getElementById('adam-actual-img');
+      if (savedPhoto && img) {
+        img.src = savedPhoto;
+      }
+
+      const savedName = localStorage.getItem(STORAGE_KEY_NAME) || 'البطل الخارق آدم';
+      updateHeroNameDisplay(savedName);
+    }
+
+    function processSelectedImage(file) {
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const rawUrl = e.target.result;
+        const imgObj = new Image();
+        imgObj.onload = function() {
+          const maxDim = 800;
+          let width = imgObj.width;
+          let height = imgObj.height;
+
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(imgObj, 0, 0, width, height);
+
+          const optimizedData = canvas.toDataURL('image/jpeg', 0.88);
+
+          try {
+            localStorage.setItem(STORAGE_KEY_PHOTO, optimizedData);
+          } catch(err) {}
+
+          const heroImg = document.getElementById('adam-actual-img');
+          if (heroImg) {
+            heroImg.src = optimizedData;
+          }
+          currentScale = 1;
+          currentRotate = 0;
+          applyTransform();
+
+          SoundFx.cheer();
+          triggerConfetti();
+        };
+        imgObj.src = rawUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function adjustImageScale(delta) {
+      currentScale = Math.max(0.6, Math.min(2.5, currentScale + delta));
+      applyTransform();
+    }
+
+    function adjustImageRotate(deg) {
+      currentRotate = (currentRotate + deg) % 360;
+      applyTransform();
+    }
+
+    function applyTransform() {
+      const img = document.getElementById('adam-actual-img');
+      if (img) {
+        img.style.transform = `scale(${currentScale}) rotate(${currentRotate}deg)`;
+        SoundFx.click();
+      }
+    }
+
+    function resetAdamPhoto() {
+      localStorage.removeItem(STORAGE_KEY_PHOTO);
+      currentScale = 1;
+      currentRotate = 0;
+      const img = document.getElementById('adam-actual-img');
+      if (img) {
+        img.src = 'adam.jpg';
+        applyTransform();
+      }
+      SoundFx.starDing();
+    }
+
+    function editHeroName() {
+      const current = localStorage.getItem(STORAGE_KEY_NAME) || 'البطل الخارق آدم';
+      const newName = prompt('اكتبي اسم أو لقب بطلنا الصغير:', current);
+      if (newName && newName.trim() !== '') {
+        const cleanName = newName.trim();
+        localStorage.setItem(STORAGE_KEY_NAME, cleanName);
+        updateHeroNameDisplay(cleanName);
+        SoundFx.cheer();
+        triggerConfetti();
+      }
+    }
+
+    function updateHeroNameDisplay(name) {
+      document.getElementById('hero-name-badge').innerText = name;
+      document.getElementById('hero-name-display').innerText = name;
+    }
+
+    function speakHeroGreeting() {
+      SoundFx.click();
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const heroName = localStorage.getItem(STORAGE_KEY_NAME) || 'آدم';
+        const msg = new SpeechSynthesisUtterance(`أهلاً بك يا بطلنا الجميل ${heroName} في عالمك الساحر! أنت اليوم تنير كل المكان بابتسامتك وذكائك! هيا نلعب ونبدع معاً!`);
+        msg.lang = 'ar-SA';
+        msg.rate = 0.95;
+        window.speechSynthesis.speak(msg);
+        triggerConfetti();
+      }
+    }
+  </script>
+
+  <script>
+    function switchTab(tabId) {
+      SoundFx.click();
+      const sections = ['hero', 'habits', 'draw', 'games'];
+      sections.forEach(id => {
+        const sec = document.getElementById(`sec-${id}`);
+        const btn = document.getElementById(`tab-btn-${id}`);
+        if (!sec || !btn) return;
+
+        if (id === tabId) {
+          sec.classList.remove('hidden');
+          btn.className = "clay-btn tab-btn px-4 py-2.5 rounded-2xl font-black text-sm md:text-base flex items-center gap-2 bg-gradient-to-r from-bubblegum to-rose-500 text-white shadow-md";
+        } else {
+          sec.classList.add('hidden');
+          btn.className = "clay-btn tab-btn px-4 py-2.5 rounded-2xl font-black text-sm md:text-base flex items-center gap-2 bg-white text-slate-700 border-2 border-slate-100 hover:bg-slate-50";
+        }
+      });
+
+      if (tabId === 'draw') {
+        setTimeout(resizeCanvas, 150);
+      }
+    }
+
+    // Daily Habit Stars System
+    const habitsList = [
+      { id: 1, title: 'تناول طعامي الصحي 🥗', desc: 'خضار وفواكه لقوة وبطولة آدم', completed: false, icon: '🥦' },
+      { id: 2, title: 'غسيل أسناني بنشاط 🪥', desc: 'ابتسامة مشرقة ونظيفة مثل النجوم', completed: false, icon: '🦷' },
+      { id: 3, title: 'ترتيب ألعابي وسريري 🧸', desc: 'غرفة بطلنا دائماً مرتبة وجميلة', completed: false, icon: '🎁' },
+      { id: 4, title: 'الاستماع للماما والبابا 💖', desc: 'أخلاق وسلوك الأبطال الفرسان', completed: false, icon: '🤝' },
+      { id: 5, title: 'رسم لوحة أو قراءة قصة 📖', desc: 'تنمية الذكاء والخيال الواسع', completed: false, icon: '🎨' },
+      { id: 6, title: 'شرب الماء والنوم في موعدي 🌙', desc: 'طاقة وصحة لأحلام سعيدة', completed: false, icon: '⭐' }
+    ];
+
+    function renderHabits() {
+      const container = document.getElementById('habits-grid');
+      container.innerHTML = '';
+      let earnedCount = 0;
+
+      habitsList.forEach(habit => {
+        if (habit.completed) earnedCount++;
+        const card = document.createElement('div');
+        card.className = `p-5 rounded-3xl border-3 transition-all duration-200 cursor-pointer flex items-center justify-between ${
+          habit.completed 
+            ? 'bg-gradient-to-r from-amber-50 to-yellow-100 border-amber-300 shadow-sm' 
+            : 'bg-white border-slate-100 hover:border-sky/50 shadow'
+        }`;
+        card.onclick = () => toggleHabit(habit.id);
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl ${habit.completed ? 'bg-amber-300/60' : 'bg-slate-100'}">
+              ${habit.icon}
+            </div>
+            <div>
+              <h5 class="font-black text-slate-800 text-sm md:text-base ${habit.completed ? 'line-through text-slate-400' : ''}">${habit.title}</h5>
+              <p class="text-xs text-slate-500 font-semibold">${habit.desc}</p>
+            </div>
+          </div>
+          <button class="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl transition-transform active:scale-90 ${
+            habit.completed ? 'bg-amber-400 text-white shadow-md' : 'bg-slate-100 text-slate-300'
+          }">
+            ${habit.completed ? '⭐' : '☆'}
+          </button>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('stars-total-badge').innerText = earnedCount;
+      const quickStar = document.getElementById('quick-star-count');
+      if (quickStar) quickStar.innerText = earnedCount;
+    }
+
+    function toggleHabit(id) {
+      const item = habitsList.find(h => h.id === id);
+      if (item) {
+        item.completed = !item.completed;
+        if (item.completed) {
+          SoundFx.starDing();
+          triggerConfetti();
+        } else {
+          SoundFx.click();
+        }
+        renderHabits();
+      }
+    }
+
+    // Canvas Drawing Logic
+    const canvas = document.getElementById('paintCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let currentColor = '#FF3366';
+    let currentBrushSize = 10;
+    let selectedStickerIcon = null;
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0) return;
+      
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+    }
+
+    window.addEventListener('resize', () => {
+      if (!document.getElementById('sec-draw').classList.contains('hidden')) {
+        resizeCanvas();
+      }
+    });
+
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startPaint(e) {
+      e.preventDefault();
+      SoundFx.click();
+      const pos = getCanvasCoordinates(e);
+
+      if (selectedStickerIcon) {
+        ctx.font = '50px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(selectedStickerIcon, pos.x, pos.y);
+        SoundFx.starDing();
+        return;
+      }
+
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    function drawPaint(e) {
+      if (!isDrawing || selectedStickerIcon) return;
+      e.preventDefault();
+      const pos = getCanvasCoordinates(e);
+      ctx.lineWidth = currentBrushSize;
+      ctx.strokeStyle = currentColor;
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+
+    function stopPaint() {
+      if (isDrawing) {
+        ctx.closePath();
+        isDrawing = false;
+      }
+    }
+
+    canvas.addEventListener('mousedown', startPaint);
+    canvas.addEventListener('mousemove', drawPaint);
+    window.addEventListener('mouseup', stopPaint);
+    canvas.addEventListener('touchstart', startPaint, { passive: false });
+    canvas.addEventListener('touchmove', drawPaint, { passive: false });
+    window.addEventListener('touchend', stopPaint);
+
+    function selectColor(colorHex, btnElem) {
+      SoundFx.click();
+      currentColor = colorHex;
+      selectedStickerIcon = null;
+      document.getElementById('btn-brush-mode').className = "text-xs px-2.5 py-1 bg-sky text-white rounded-lg font-bold";
+
+      document.querySelectorAll('.color-dot').forEach(el => el.classList.remove('ring-2', 'ring-bubblegum'));
+      if (btnElem) btnElem.classList.add('ring-2', 'ring-bubblegum');
+    }
+
+    function setBrushSize(size) {
+      SoundFx.click();
+      currentBrushSize = size;
+      selectedStickerIcon = null;
+      document.getElementById('btn-brush-mode').className = "text-xs px-2.5 py-1 bg-sky text-white rounded-lg font-bold";
+    }
+
+    function selectSticker(icon) {
+      SoundFx.click();
+      selectedStickerIcon = icon;
+      if (!icon) {
+        document.getElementById('btn-brush-mode').className = "text-xs px-2.5 py-1 bg-sky text-white rounded-lg font-bold";
+      } else {
+        document.getElementById('btn-brush-mode').className = "text-xs px-2.5 py-1 bg-slate-200 text-slate-700 rounded-lg font-bold";
+      }
+    }
+
+    function clearCanvas() {
+      SoundFx.click();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function downloadArtwork() {
+      SoundFx.cheer();
+      triggerConfetti();
+      const link = document.createElement('a');
+      link.download = 'adam-magic-artwork.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Memory Game Logic
+    const memoryIcons = ['👑', '🚀', '🦖', '🎈', '⭐', '🚗'];
+    let memoryCards = [];
+    let flippedIndices = [];
+    let matchedCount = 0;
+    let moves = 0;
+    let isBoardLocked = false;
+
+    function initMemoryGame() {
+      SoundFx.click();
+      const grid = document.getElementById('memory-grid');
+      const winBanner = document.getElementById('game-win-banner');
+      winBanner.classList.add('hidden');
+      grid.innerHTML = '';
+      
+      moves = 0;
+      matchedCount = 0;
+      flippedIndices = [];
+      isBoardLocked = false;
+      document.getElementById('moves-count').innerText = moves;
+
+      const deck = [...memoryIcons, ...memoryIcons].sort(() => Math.random() - 0.5);
+
+      memoryCards = deck.map((icon, index) => ({
+        id: index,
+        icon: icon,
+        isFlipped: false,
+        isMatched: false
+      }));
+
+      memoryCards.forEach((card, index) => {
+        const cardBtn = document.createElement('button');
+        cardBtn.className = "card-slot h-24 sm:h-28 md:h-32 rounded-3xl bg-gradient-to-br from-amber-200 to-yellow-300 shadow-md border-4 border-white flex items-center justify-center text-4xl transition-all duration-300 transform active:scale-95";
+        cardBtn.innerHTML = `<span class="hidden text-4xl sm:text-5xl" id="card-content-${index}">${card.icon}</span><span id="card-cover-${index}" class="text-3xl text-amber-700 font-black">؟</span>`;
+        cardBtn.onclick = () => onCardClick(index);
+        grid.appendChild(cardBtn);
+      });
+    }
+
+    function onCardClick(idx) {
+      if (isBoardLocked) return;
+      const card = memoryCards[idx];
+      if (card.isFlipped || card.isMatched) return;
+
+      SoundFx.click();
+      flipCard(idx, true);
+      flippedIndices.push(idx);
+
+      if (flippedIndices.length === 2) {
+        moves++;
+        document.getElementById('moves-count').innerText = moves;
+        checkMatch();
+      }
+    }
+
+    function flipCard(idx, show) {
+      const cover = document.getElementById(`card-cover-${idx}`);
+      const content = document.getElementById(`card-content-${idx}`);
+      const cardBtn = cover.parentElement;
+      memoryCards[idx].isFlipped = show;
+
+      if (show) {
+        cover.classList.add('hidden');
+        content.classList.remove('hidden');
+        cardBtn.classList.remove('from-amber-200', 'to-yellow-300');
+        cardBtn.classList.add('bg-white');
+      } else {
+        cover.classList.remove('hidden');
+        content.classList.add('hidden');
+        cardBtn.classList.add('from-amber-200', 'to-yellow-300');
+        cardBtn.classList.remove('bg-white');
+      }
+    }
+
+    function checkMatch() {
+      const [idx1, idx2] = flippedIndices;
+      const card1 = memoryCards[idx1];
+      const card2 = memoryCards[idx2];
+
+      if (card1.icon === card2.icon) {
+        SoundFx.starDing();
+        card1.isMatched = true;
+        card2.isMatched = true;
+        matchedCount += 2;
+        flippedIndices = [];
+
+        if (matchedCount === memoryCards.length) {
+          setTimeout(() => {
+            SoundFx.cheer();
+            triggerConfetti();
+            document.getElementById('game-win-banner').classList.remove('hidden');
+          }, 350);
+        }
+      } else {
+        isBoardLocked = true;
+        setTimeout(() => {
+          flipCard(idx1, false);
+          flipCard(idx2, false);
+          flippedIndices = [];
+          isBoardLocked = false;
+        }, 850);
+      }
+    }
+
+    // Startup on page load
+    window.addEventListener('load', () => {
+      initHeroProfile();
+      renderHabits();
+      initMemoryGame();
+      setTimeout(resizeCanvas, 200);
+    });
+  </script>
+
+</body>
+</html>
